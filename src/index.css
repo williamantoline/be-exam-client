@@ -1,5 +1,10 @@
 @import "./styles/bootstrap.min.css";
 @import "./components/pages/auth/style.css";
+@import "./components/elements/sidebar/style.css";
+
+* {
+  text-decoration: none !important;
+}
 
 body {
     --bs-body-bg: #fff;
