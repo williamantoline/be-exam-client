@@ -1,6 +1,13 @@
+@import "./styles/bootstrap.min.css";
+@import "./components/pages/auth/style.css";
+
 body {
     --bs-body-bg: #fff;
     --bs-border-color: #000;
+}
+
+#root {
+  width: 100%;
 }
 
 .modal {
