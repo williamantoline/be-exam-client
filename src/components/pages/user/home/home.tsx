@@ -1,5 +1,6 @@
 import Book from "../../../elements/book";
 import Header from "../../../elements/header";
+import Quote from "../../../elements/quote";
 
 interface Props{}
 
@@ -13,7 +14,7 @@ export default function UserHome(props:Props){
                     <div className="row py-lg-5">
                         <div className="col-lg-6 col-md-8 mx-auto">
                             <h1 className="fw-light">Atheneum</h1>
-                            <p className="lead text-muted">"You want weapons? We’re in a library. Books are the best weapon in the world. This room’s the greatest arsenal we could have. Arm yourself!"</p>
+                            <Quote />
                             <p>
                                 <a href="/" className="btn btn-primary my-2">Main call to action</a>
                                 <a href="/" className="btn btn-secondary my-2">Secondary action</a>
