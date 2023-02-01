@@ -4,6 +4,7 @@ interface Props {
     children: React.ReactNode,
     color?: string,
     title: string,
+    author: string,
 }
 
 export default function Book(props: Props) {
@@ -23,7 +24,7 @@ export default function Book(props: Props) {
                                 <div className="d-flex justify-content-between align-items-center">
                                     {props.children}
                                     
-                                    <small className="text-muted">9 mins</small>
+                                    <small className="text-muted">{props.author}</small>
                                 </div>
                             </div>
                         </div>
