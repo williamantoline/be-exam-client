@@ -1,38 +1,3 @@
-body {
-  display: flex;
-  align-items: center;
-  background-color: #f0f0f0;
-}
-
-.form-signin {
-  max-width: 330px;
-  padding: 15px;
-}
-
-.form-signin .form-floating:focus-within {
-  z-index: 2;
-}
-
-.form-signin .form-floating {
-  margin-bottom: -1px;
-}
-
-.form-signin .form-floating input,
-  .form-signin .form-floating select {
-  border-radius: 0;
-}
-
-.form-signin .form-floating-down input 
-.form-signin .form-floating-down select {
-  border-radius: 0 0 4px 4px;
-}
-
-.form-signin .form-floating-up input {
-  border-radius: 4px 4px 0 0;
-}
-
-/*  */
-
 .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
