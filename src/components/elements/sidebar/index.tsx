@@ -1,6 +1,16 @@
 import { Link } from "react-router-dom";
 
-interface Props {}
+interface User {
+    id: string,
+    name: string,
+    email: string,
+    is_admin: boolean,
+}
+
+interface Props {
+    active: string,
+    user: User,
+}
 
 export default function Sidebar(props: Props) {
     return (
@@ -14,32 +24,40 @@ export default function Sidebar(props: Props) {
                     <hr />
                     <ul className="nav nav-pills flex-column mb-auto">
                         <li className="nav-item">
-                            <Link to="/categories">
-                                <div className="nav-link active" aria-current="page">
+                            <Link to="/admin">
+                                <div className={props.active === "dashboard" ? "nav-link active" : "nav-link link-dark"} aria-current="page">
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#home"/></svg>
                                     Dashboard
                                 </div>
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link to="/admin/users">
+                                <div className={props.active === "user" ? "nav-link active" : "nav-link link-dark"} aria-current="page">
+                                    <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#home"/></svg>
+                                    User
+                                </div>
+                            </Link>
+                        </li>
                         <li>
-                            <Link to="/categories">
-                                <div className="nav-link link-dark">
+                            <Link to="/admin/categories">
+                                <div className={props.active === "categories" ? "nav-link active" : "nav-link link-dark"}>
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#speedometer2"/></svg>
                                     Categories
                                 </div>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/books">
-                                <div className="nav-link link-dark">
+                            <Link to="/admin/books">
+                                <div className={props.active === "books" ? "nav-link active" : "nav-link link-dark"}>
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#table"/></svg>
                                     Books
                                 </div>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/borrowings">
-                                <div className="nav-link link-dark">
+                            <Link to="/admin/borrowings">
+                                <div className={props.active === "borrowings" ? "nav-link active" : "nav-link link-dark"}>
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#grid"/></svg>
                                     Borrowings
                                 </div>
@@ -47,8 +65,8 @@ export default function Sidebar(props: Props) {
                             
                         </li>
                         <li>
-                            <Link to="/notifications">
-                                <div className="nav-link link-dark">
+                            <Link to="/admin/notifications">
+                                <div className={props.active === "notifications" ? "nav-link active" : "nav-link link-dark"}>
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#people-circle"/></svg>
                                     Notifications
                                 </div>
@@ -58,12 +76,15 @@ export default function Sidebar(props: Props) {
                     <hr />
                     <div className="dropdown">
                         <a href="/" className="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
-                            <strong>mdo</strong>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" className="rounded-circle me-2 bi bi-person-circle" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                            </svg>
+                            <strong>{props.user.name}</strong>
                         </a>
                         <ul className="dropdown-menu text-small shadow">
                             <li>
-                                <Link to="/profile">
+                                <Link to="/admin/profile">
                                     <div className="dropdown-item">Profile</div>
                                 </Link>
                             </li>

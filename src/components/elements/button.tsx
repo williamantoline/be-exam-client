@@ -16,7 +16,7 @@ interface Props {
   dataBsDismiss?: string,
   ariaLabel?: string,
   className?: string,
-  onClick?: () => void,
+  onClick?: any,
   isModalToggler?: boolean,
   modalTarget?: string,
 }
