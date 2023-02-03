@@ -93,9 +93,9 @@ export default function BookPage(props: Props) {
     const handleStockInputChange = (e: any) => {
         setStockInput(e.target.value);
     }
-    const [imageInput, setImageInput] = useState("");
+    const [imageInput, setImageInput] = useState(null);
     const handleImageInputChange = (e: any) => {
-        setImageInput(e.target.value);
+        setImageInput(e.target.files[0]);
     }
 
     const [successMessage, setSuccessMessage] = useState("");
@@ -147,7 +147,7 @@ export default function BookPage(props: Props) {
     const handleAddBook = async () => {
         setSuccessMessage("");
         setErrorMessage("");
-        const formData = new FormData()
+        let formData = new FormData()
         formData.append("title", titleInput)
         formData.append("author", authorInput)
         formData.append("language", languageInput)
@@ -156,12 +156,14 @@ export default function BookPage(props: Props) {
         formData.append("description", descriptionInput)
         formData.append("page", pageInput)
         formData.append("categoryId", categoryInput)
+        formData.append("image", imageInput || '')
         await axios.post(`http://127.0.0.1:3013/api/books`, formData)
         .then((res: any) => {
             setSuccessMessage(res.data.message);
             resetForm();
         })
         .catch((err: any) => {
+            console.log(err)
             setErrorMessage(err.response.data.message);
         });
     }
@@ -359,7 +361,7 @@ export default function BookPage(props: Props) {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="col-form-label">Image:</label>
-                                    <input value={imageInput} onChange={handleImageInputChange} type="file" className="form-control" id="recipient-name" />
+                                    <input onChange={handleImageInputChange} type="file" className="form-control" id="recipient-name" />
                                 </div>
                             </form>
                         </div>
@@ -439,7 +441,7 @@ export default function BookPage(props: Props) {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="col-form-label">Image:</label>
-                                    <input value={imageInput} onChange={handleImageInputChange} type="file" className="form-control" id="recipient-name" />
+                                    <input onChange={handleImageInputChange} type="file" className="form-control" id="recipient-name" />
                                 </div>
                             </form>
                         </div>
@@ -502,7 +504,7 @@ export default function BookPage(props: Props) {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="col-form-label">Image:</label>
-                                    <input value={imageInput} onChange={handleImageInputChange} type="file" className="form-control" id="recipient-name" />
+                                    <input onChange={handleImageInputChange} type="file" className="form-control" id="recipient-name" />
                                 </div>
                             </form>
                         </div>
