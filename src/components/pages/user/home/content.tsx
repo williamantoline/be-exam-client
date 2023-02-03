@@ -49,9 +49,13 @@ export default function UserPageContent(props:Props){
                             <input type="text" className={styles.message()} placeholder="Write you appointment & messages here..." />
                         </div>
                         <div className="modal-body">
-                        <Book categories="Sci-Fi & Fantasy" author="J.K.Rowling" status={true}>Harry Potter and The Sorcerer’s Stone</Book>
-                        <Book categories="Sci-Fi & Fantasy" author="J.K.Rowling" status={true}>Harry Potter and The Prisoner of Azkaban</Book>
-                        <Book categories="Sci-Fi & Fantasy" author="J.K.Rowling" status={true}>Harry Potter and The Goblet of Fire</Book>
+                        <ul>
+                            <li>Title</li>
+                            <li>Title</li>
+                            <li>Title</li>
+                            <li>Title</li>
+                            <li>Title</li>
+                        </ul>
                         </div>
                         <div className="modal-footer">
                           <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
