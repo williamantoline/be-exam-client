@@ -21,6 +21,11 @@ export default function ProfilePage(props: Props) {
     const [nameInput, setNameInput] = useState(user?.name);
     const [emailInput, setEmailInput] = useState(user?.email);
     const [passwordInput, setPasswordInput] = useState("");
+    const [cPasswordInput, setCPasswordInput] = useState("");
+    const handleNameInputChange = (e: any) => setNameInput(e.target.value);
+    const handleEmailInputChange = (e: any) => setEmailInput(e.target.value);
+    const handlePasswordInputChange = (e: any) => setPasswordInput(e.target.value);
+    const handleCPasswordInputChange = (e: any) => setCPasswordInput(e.target.value);
 
     useEffect(() => {
         axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, { name: 'John Doe' }, {
@@ -45,6 +50,12 @@ export default function ProfilePage(props: Props) {
 
 
     const handleSave = async () => {
+        if (passwordInput !== cPasswordInput) {
+            alert("Password and Password Confirmation do not match!");
+            setPasswordInput("");
+            setCPasswordInput("");
+            return;
+        }
         await axios.patch(`http://127.0.0.1:3013/api/auth/edit`, {
             name: nameInput,
             email: emailInput,
@@ -55,6 +66,10 @@ export default function ProfilePage(props: Props) {
                 'Authorization': Cookie.get('token'),
             }
         })
+    }
+
+    const handleCancel = () => {
+        setIsEditMode(!isEditMode);
     }
 
     const handleButtonClick = () => {
@@ -75,17 +90,26 @@ export default function ProfilePage(props: Props) {
                         <form className="mt-4">
                             <div className="mb-3">
                                 <label htmlFor="name" className="form-label">Name</label>
-                                <input disabled={!isEditMode} type="text" className="form-control" id="name" value={nameInput} />
+                                <input disabled={!isEditMode} type="text" className="form-control" id="name" value={nameInput} onChange={handleNameInputChange} />
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label">Email Address</label>
-                                <input disabled={!isEditMode} type="email" className="form-control" id="email" value={emailInput} />
+                                <input disabled={!isEditMode} type="email" className="form-control" id="email" value={emailInput}  onChange={handleEmailInputChange} />
                             </div>
-                            {/* <div className="mb-3">
+                            <div className="mb-3" hidden={!isEditMode}>
                                 <label htmlFor="password" className="form-label">Password</label>
-                                <input disabled type="password" className="form-control" id="password" />
-                            </div> */}
+                                <input disabled={!isEditMode} type="password" className="form-control" id="password" value={passwordInput} onChange={handlePasswordInputChange} />
+                            </div>
+                            <div className="mb-3" hidden={!isEditMode}>
+                                <label htmlFor="cpassword" className="form-label">Confirm Password</label>
+                                <input disabled={!isEditMode} type="password" className="form-control" id="cpassword" value={cPasswordInput} onChange={handleCPasswordInputChange} />
+                            </div>
                             <button type="button" onClick={handleButtonClick} className="mt-3 btn btn-primary">{isEditMode ? 'Save' : 'Edit'}</button>
+                            {
+                                isEditMode ?
+                                <button type="button" onClick={handleCancel} className="mt-3 mx-2 btn btn-secondary">Cancel</button>
+                                : <></>
+                            }
                         </form>
                     </div>
                 </Flex>

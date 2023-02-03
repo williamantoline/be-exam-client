@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+const Cookie = require("js-cookie");
 
 interface User {
     id: string,
@@ -10,9 +11,16 @@ interface User {
 interface Props {
     active: string,
     user: User,
+    // notifications: any,
 }
 
 export default function Sidebar(props: Props) {
+
+    const handleSignOut = () => {
+        Cookie.remove('token', { path: '' });
+        window.location.replace("/login");
+    }
+
     return (
         <>
             <main className="d-flex flex-nowrap">
@@ -23,19 +31,19 @@ export default function Sidebar(props: Props) {
                     </a>
                     <hr />
                     <ul className="nav nav-pills flex-column mb-auto">
-                        <li className="nav-item">
-                            <Link to="/admin">
+                        {/* <li className="nav-item">
+                            <Link to="/admin/dashboard">
                                 <div className={props.active === "dashboard" ? "nav-link active" : "nav-link link-dark"} aria-current="page">
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#home"/></svg>
                                     Dashboard
                                 </div>
                             </Link>
-                        </li>
+                        </li> */}
                         <li className="nav-item">
                             <Link to="/admin/users">
-                                <div className={props.active === "user" ? "nav-link active" : "nav-link link-dark"} aria-current="page">
+                                <div className={props.active === "users" ? "nav-link active" : "nav-link link-dark"} aria-current="page">
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#home"/></svg>
-                                    User
+                                    Users
                                 </div>
                             </Link>
                         </li>
@@ -68,7 +76,8 @@ export default function Sidebar(props: Props) {
                             <Link to="/admin/notifications">
                                 <div className={props.active === "notifications" ? "nav-link active" : "nav-link link-dark"}>
                                     <svg className="bi pe-none me-2" width="16" height="16"><use xlinkHref="#people-circle"/></svg>
-                                    Notifications
+                                    Notifications 
+                                    {/* <span className="badge text-bg-secondary">{props.notifications.length}</span> */}
                                 </div>
                             </Link>
                         </li>
@@ -92,9 +101,7 @@ export default function Sidebar(props: Props) {
                                 <hr className="dropdown-divider" />
                             </li>
                             <li>
-                                <Link to="/signout">
-                                    <div className="dropdown-item">Sign Out</div>
-                                </Link>
+                                <div className="dropdown-item" style={{cursor: "pointer"}} onClick={handleSignOut}>Sign Out</div>
                             </li>
                         </ul>
                     </div>

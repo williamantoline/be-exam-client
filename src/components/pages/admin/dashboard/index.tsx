@@ -17,30 +17,40 @@ export default function Dashboard(props: Props) {
     const [loading, setLoading] = useState<Boolean>(true);
     const [user, setUser] = useState<User>();
 
-    useEffect(() => {
-        axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, { name: 'John Doe' }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': Cookie.get('token'),
-            }
-        })
-        .then((res: any) => {
-            setUser(res.data.user);
-            setLoading(false);
-        })
-    }, []);
-
     // useEffect(() => {
-    //     axios.post(`http://127.0.0.1:3013/api/auth/me`, { name: 'John Doe' }, {
+    //     axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, {}, {
     //         headers: {
     //             'Content-Type': 'application/json',
     //             'Authorization': Cookie.get('token'),
     //         }
     //     })
     //     .then((res: any) => {
-    //         console.log(res.data)
+    //         console.log(res.data);
+    //         setUser(res.data.user);
+    //         setLoading(false);
     //     })
     // }, []);
+
+    // useEffect(() => {
+    //     axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, { name: 'John Doe' }, {
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': Cookie.get('token') ?? undefined,
+    //         }
+    //     })
+    //     .then((res: any) => {
+    //         if(res.data.tokenStatus === true){
+    //             if (!res.data.is_admin) {
+    //                 window.location.replace("/home");
+    //             } 
+    //         }
+    //     })
+    //     .catch((err: any) => {
+    //         Cookie.set('token', undefined);
+    //         window.location.replace("/login");
+    //     })
+    // }, []);
+
 
     if (user) {
         return (

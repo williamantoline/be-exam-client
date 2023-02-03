@@ -6,7 +6,7 @@ interface Props {
     id: string,
     title: string,
     styles?: any,
-    buttonClickHandler: (name: string) => void,
+    buttonClickHandler: () => void,
     buttonLabel: string,
     children: ReactNode,
 }

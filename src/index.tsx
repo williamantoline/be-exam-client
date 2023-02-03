@@ -5,6 +5,7 @@ import { StyleProvider } from './styles/style-provider';
 import "./index.css";
 import 'bootstrap/dist/js/bootstrap';
 
+
 ReactDOM.render(
   <React.StrictMode>
     <StyleProvider>
