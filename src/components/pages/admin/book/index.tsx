@@ -397,7 +397,7 @@ export default function BookPage(props: Props) {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form encType="multipart/form-data">
+                            <form>
                                 <div className="mb-3">
                                     <select onChange={handleCategoryInputChange} className="form-select" aria-label="Default select example">
                                         {
