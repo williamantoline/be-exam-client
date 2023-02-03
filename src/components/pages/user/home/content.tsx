@@ -1,6 +1,8 @@
 import Book from "../../../elements/book";
 import Quote from "../../../elements/quote";
+
 import React, { useState } from "react";
+import { css } from "../../../../styles/styles";
 
 interface Props{}
 
@@ -39,9 +41,12 @@ export default function UserPageContent(props:Props){
                     <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered">
                       <div className="modal-content">
-                        <div className="modal-header">
-                          <h1 className="modal-title fs-5" id="exampleModalLabel">Box</h1>
-                          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div className="modal-header d-block">
+                            <div className="d-flex">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">Book Box</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <input type="text" className={styles.message()} placeholder="Write you appointment & messages here..." />
                         </div>
                         <div className="modal-body">
                         <Book categories="Sci-Fi & Fantasy" author="J.K.Rowling" status={true}>Harry Potter and The Sorcerer’s Stone</Book>
@@ -50,7 +55,7 @@ export default function UserPageContent(props:Props){
                         </div>
                         <div className="modal-footer">
                           <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="button" className="btn btn-primary">Save changes</button>
+                          <button type="button" className="btn btn-primary">Submit</button>
                         </div>
                       </div>
                     </div>
@@ -63,3 +68,31 @@ export default function UserPageContent(props:Props){
     )
 }
 
+const styles = {
+    message: css({
+        input: {
+            background: "none",
+            border: "none",
+            width: "90%",
+            height: "80%",
+            marginLeft: "8px",
+            color: "black",
+            fontSize: 16,
+            borderTopStyle: "none",
+            outline: "none",
+        },
+        marginTop: 10,
+        padding: "6px 12px",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: 42,
+        borderRadius: 6,
+        backgroundColor: "#ebeced",
+        "&:hover": {
+            background: "#4E5154",
+        },
+    })   
+}

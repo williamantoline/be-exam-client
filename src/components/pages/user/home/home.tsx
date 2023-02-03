@@ -13,13 +13,15 @@ export default function UserHome(props:Props){
             <Sidebar />
             <UserPageContent />
         </div> */}
-        <div className="d-flex">
-            {/* <Sidebar /> */}
+        {/* <div className="d-flex">
+            <Sidebar />
             <div className="d-table">
                 <Header />
                 <UserPageContent />
             </div>
-        </div>
+        </div> */}
+        <Header />
+        <UserPageContent />
         </>
     )
 }
