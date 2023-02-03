@@ -1,13 +1,21 @@
-import { css } from "../../styles/styles";
+import React, { useState } from "react";
 
 interface Props {
-    children: React.ReactNode,
     color?: string,
-    title: string,
+    categories: string,
     author: string,
+    status: boolean,
+    children: React.ReactNode,
 }
 
 export default function Book(props: Props) {
+    const isBackground = props.status ? true : false;
+    const [showFullText, setShowFullText] = useState(false);
+    
+    const toggleFullText = () => {
+        setShowFullText(!showFullText);
+    };
+    
     return(
         <div className="album py-5 bg-light">
             <div className="container">
@@ -20,10 +28,30 @@ export default function Book(props: Props) {
                                 <text x="50%" y="50%" fill="#eceeef" dy=".3em">Picture</text>
                             </svg>
                             <div className="card-body">
-                                <p className="card-text">{props.title}</p>
-                                <div className="d-flex justify-content-between align-items-center">
+                            { showFullText ?
+                                <div style={{ height: "150px", overflow: "auto" }} onClick={toggleFullText}>
+                                    <p className="card-text fs-5">{props.children}</p>
+                                </div>
+                                : 
+                                <p 
+                                className="card-text fs-5"
+                                style={{
+                                  width: "auto",
+                                  overflow: "hidden",
+                                  whiteSpace: "nowrap",
+                                  textOverflow: "ellipsis",
+                                  cursor: "pointer"
+                                }}
+                                onClick={toggleFullText}
+                                >
                                     {props.children}
-                                    
+                                  
+                                </p>
+                                }
+                                <p className="card-text">{props.categories}</p>
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <div style={{backgroundColor: isBackground ? '#44f205' : 'red', borderRadius: "50%", width: "25px", height: "25px"}} className="" ></div>
+                                    <input type="checkbox" className="ms-2 me-auto" style={{width: "20px", height: "20px"}} size={100} disabled={!isBackground} />
                                     <small className="text-muted">{props.author}</small>
                                 </div>
                             </div>
@@ -33,9 +61,5 @@ export default function Book(props: Props) {
             </div>     
         </div>   
     )
-    
-}
-
-const styles = {
     
 }

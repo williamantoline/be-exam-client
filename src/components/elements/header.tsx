@@ -1,5 +1,5 @@
 import { css } from "../../styles/styles";
-
+const IcSearch = require("../../assets/ic-search.png");
 
 interface Props{
 
@@ -29,8 +29,10 @@ export default function Header (props:Props){
                 </div>
                 <div className="navbar navbar-dark bg-dark shadow-sm">
                     <div className="container">
-                        <a href="#" className="navbar-brand d-flex align-items-center">
-                        </a>
+                        <div className={styles.searchInput()}>
+                            <img src={IcSearch} alt="" />
+                            <input type="text" placeholder="Find..." />
+                        </div>
                         <button className="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
@@ -38,4 +40,36 @@ export default function Header (props:Props){
                 </div>
             </header>
     )
+}
+
+const styles = {
+    searchInput: css({
+        img: {
+            width: 28,
+            height: 28
+        },
+        input: {
+            background: "none",
+            border: "none",
+            width: "90%",
+            height: "80%",
+            marginLeft: "8px",
+            color: "white",
+            fontSize: 16,
+            borderTopStyle: "none",
+            outline: "none",
+        },
+        padding: "6px 12px",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 320,
+        height: 42,
+        borderRadius: 6,
+        backgroundColor: "#2D2F30",
+        "&:hover": {
+            background: "#4E5154",
+        },
+})
 }
