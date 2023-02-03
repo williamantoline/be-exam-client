@@ -1,12 +1,52 @@
 import Book from "../../../elements/book";
 import Quote from "../../../elements/quote";
-
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { css } from "../../../../styles/styles";
+
+
+const { endpoint } = require("../../../../config");
+
+const Cookie = require("js-cookie");
 
 interface Props{}
 
 export default function UserPageContent(props:Props){
+    const [isLoading, setIsLoading] = useState(true);
+    const [files, setFiles] = useState([]);
+    React.useEffect(() => {
+        axios.post(`${endpoint}/auth/jwtToken`, { name: 'John Doe' }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
+        .then((res: any)=>{
+            if(res.data.tokenStatus !== true){
+                window.location.replace("/login");
+            }
+        })
+    }, []);
+
+    const fetchFiles = async () => {
+        setIsLoading(true);
+        await axios.get(`${endpoint}/api/files`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
+        .then((res: any) => {
+            setFiles(res.data.data);
+            setIsLoading(false);
+        });
+    };
+
+    useEffect(() => {
+        fetchFiles();
+    }, []);
+
+
     const [showDiv, setShowDiv] = React.useState(false);
     const handleButtonClick = () => {
         setShowDiv(!showDiv);
