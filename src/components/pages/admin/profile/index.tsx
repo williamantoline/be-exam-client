@@ -40,45 +40,6 @@ export default function ProfilePage(props: Props) {
         })
     }, []);
 
-    useEffect(() => {
-        setNameInput(user?.name);
-        setEmailInput(user?.email);
-        setPasswordInput("");
-    }, [user]);
-
-    const [isEditMode, setIsEditMode] = useState(false);
-
-
-    const handleSave = async () => {
-        if (passwordInput !== cPasswordInput) {
-            alert("Password and Password Confirmation do not match!");
-            setPasswordInput("");
-            setCPasswordInput("");
-            return;
-        }
-        await axios.patch(`http://127.0.0.1:3013/api/auth/edit`, {
-            name: nameInput,
-            email: emailInput,
-            password: passwordInput,
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': Cookie.get('token'),
-            }
-        })
-    }
-
-    const handleCancel = () => {
-        setIsEditMode(!isEditMode);
-    }
-
-    const handleButtonClick = () => {
-        setIsEditMode(!isEditMode);
-        if (isEditMode) {
-            handleSave();
-        }
-    }
-
 
     if (user) {
         return (
@@ -90,26 +51,20 @@ export default function ProfilePage(props: Props) {
                         <form className="mt-4">
                             <div className="mb-3">
                                 <label htmlFor="name" className="form-label">Name</label>
-                                <input disabled={!isEditMode} type="text" className="form-control" id="name" value={nameInput} onChange={handleNameInputChange} />
+                                <input disabled type="text" className="form-control" id="name" value={nameInput} onChange={handleNameInputChange} />
                             </div>
                             <div className="mb-3">
                                 <label htmlFor="email" className="form-label">Email Address</label>
-                                <input disabled={!isEditMode} type="email" className="form-control" id="email" value={emailInput}  onChange={handleEmailInputChange} />
+                                <input disabled type="email" className="form-control" id="email" value={emailInput}  onChange={handleEmailInputChange} />
                             </div>
-                            <div className="mb-3" hidden={!isEditMode}>
+                            <div className="mb-3" hidden>
                                 <label htmlFor="password" className="form-label">Password</label>
-                                <input disabled={!isEditMode} type="password" className="form-control" id="password" value={passwordInput} onChange={handlePasswordInputChange} />
+                                <input disabled type="password" className="form-control" id="password" value={passwordInput} onChange={handlePasswordInputChange} />
                             </div>
-                            <div className="mb-3" hidden={!isEditMode}>
+                            <div className="mb-3" hidden>
                                 <label htmlFor="cpassword" className="form-label">Confirm Password</label>
-                                <input disabled={!isEditMode} type="password" className="form-control" id="cpassword" value={cPasswordInput} onChange={handleCPasswordInputChange} />
+                                <input disabled type="password" className="form-control" id="cpassword" value={cPasswordInput} onChange={handleCPasswordInputChange} />
                             </div>
-                            <button type="button" onClick={handleButtonClick} className="mt-3 btn btn-primary">{isEditMode ? 'Save' : 'Edit'}</button>
-                            {
-                                isEditMode ?
-                                <button type="button" onClick={handleCancel} className="mt-3 mx-2 btn btn-secondary">Cancel</button>
-                                : <></>
-                            }
                         </form>
                     </div>
                 </Flex>
