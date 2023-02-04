@@ -442,7 +442,7 @@ export default function BookPage(props: Props) {
                         </div>
                         <div className="modal-footer">
                             <button style={{cursor: "pointer"}} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button style={{cursor: "pointer"}} className="btn btn-primary" data-bs-dismiss="modal" id={selectedId} onClick={handleEditBook} disabled={modalLoading}>
+                            <button disabled style={{cursor: "pointer"}} className="btn btn-primary" data-bs-dismiss="modal" id={selectedId} onClick={handleEditBook} >
                                 {modalLoading ? 'Loading...' : 'Submit'}
                             </button>
                         </div>
