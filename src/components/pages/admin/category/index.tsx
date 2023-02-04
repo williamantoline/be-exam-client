@@ -52,7 +52,6 @@ export default function CategoryPage(props: Props) {
         })
         .then((res: any) => {
             setCategories(res.data.data);
-            console.log(res.data);
         });
     }, [successMessage]);
 
@@ -135,7 +134,6 @@ export default function CategoryPage(props: Props) {
         })
         .catch((err: any) => {
             alert(err.response.data.message);
-            console.log(err);
         });
     }
 

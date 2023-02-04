@@ -51,7 +51,7 @@ export default function Login(props: Props) {
             set_(true);
         })
         .catch((err: any) => {
-            setError(err.response.data.message);
+            setError(err.response);
             setIsError(true);
             setPasswordInput("");
         })

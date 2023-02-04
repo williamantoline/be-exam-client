@@ -1,6 +1,5 @@
 import Book from "../../../elements/book";
 import Quote from "../../../elements/quote";
-import Button from "../../../elements/button";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import BookModel from "../../../../models/Book";
@@ -16,6 +15,9 @@ export default function UserPageContent(props:Props){
     const [bookInput, setBookInput] = useState<BookModel>();
     const [borrowings, setBorrowings] = useState<Borrowing[]>([]);
 
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
     useEffect(() => {
         axios.get(`http://127.0.0.1:3013/api/user/borrowings`, {
             headers: {
@@ -27,7 +29,7 @@ export default function UserPageContent(props:Props){
             setBorrowings(res.data.data);
             setLoading(false);
         })
-    }, []);
+    }, [successMessage]);
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:3013/api/books`, {
@@ -40,12 +42,12 @@ export default function UserPageContent(props:Props){
             setBooks(res.data.data);
             setLoading(false);
         })
-    }, []);
+    }, [successMessage]);
 
     const [modalLoading, setModalLoading] = useState(false);
 
+
     const handleSelect = async (e: any) => {
-        console.log(e.target);
         setModalLoading(true);
         await axios.get(`http://127.0.0.1:3013/api/books/${e.target.id}`, {
             headers: {
@@ -59,11 +61,12 @@ export default function UserPageContent(props:Props){
         })
         .catch((err: any) => {
             alert(err.response.data.message);
-            console.log(err);
         });
     }
 
     const handleBorrow = async () => {
+        setSuccessMessage("");
+        setErrorMessage("");
         await axios.post(`http://127.0.0.1:3013/api/user/borrowings`, {
             bookId: bookInput,
         }, {
@@ -73,15 +76,13 @@ export default function UserPageContent(props:Props){
             }
         })
         .then((res: any) => {
-            alert(res.data.message);
+            setSuccessMessage(res.data.message);
         })
         .catch((err: any) => {
-            alert(err.response.data.message);
+            setErrorMessage(err.response.data.message);
         });
     }
 
-
-    const isBackgroundRed = true;
     return(
         <main style={{ overflow: 'scroll', height: '100vh', width:'100%' }}>
             <section className="py-5 text-center container">
@@ -92,6 +93,20 @@ export default function UserPageContent(props:Props){
                     </div>
                 </div>
                 <div>
+                        {
+                            successMessage ? 
+                            <div className="mt-2 alert alert-success" role="alert">
+                                {successMessage}
+                            </div> :
+                            <></>
+                        }
+                        {
+                            errorMessage ? 
+                            <div className="mt-2 alert alert-danger" role="alert">
+                                {errorMessage}
+                            </div> :
+                            <></>
+                        }
                     <h2>Borrowing List</h2>
                     <div style={{display: "flex"}}>
                         {

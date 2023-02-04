@@ -56,9 +56,7 @@ export default function UserPage(props: Props) {
             }
         })
         .then((res: any) => {
-            console.log(res.data.data);
             setUsers(res.data.data);
-            console.log(res.data);
         });
     }, [successMessage]);
 
@@ -104,7 +102,6 @@ export default function UserPage(props: Props) {
             setNameInput(res.data.data.name);
         })
         .catch((err: any) => {
-            console.log(err);
         });
     } 
 

@@ -46,7 +46,6 @@ export default function Register(props: Props) {
             window.location.replace("/login");
         })
         .catch((err: any) => {
-            console.log(err);
             setPasswordInput("");
             setCPasswordInput("");
         })

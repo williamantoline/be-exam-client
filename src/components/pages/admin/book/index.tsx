@@ -77,7 +77,6 @@ export default function BookPage(props: Props) {
 
     const [fileInput, setFileInput] = useState<any>([]);
     const handleFileChange = (e: any) => {
-        console.log(e.target.files);
         setFileInput(e.target.files[0]);
     }
 
@@ -99,7 +98,6 @@ export default function BookPage(props: Props) {
         .then((res: any) => {
             setCategories(res.data.data);
             setCategoryInput(res.data.data[0].id);
-            console.log(res.data);
         });
     }, [successMessage]);
 
@@ -113,7 +111,6 @@ export default function BookPage(props: Props) {
         })
         .then((res: any) => {
             setBooks(res.data.data);
-            console.log(res.data);
         });
     }, [successMessage]);
 
@@ -226,7 +223,6 @@ export default function BookPage(props: Props) {
         })
         .catch((err: any) => {
             alert(err.response.data.message);
-            console.log(err);
         });
     }
 
