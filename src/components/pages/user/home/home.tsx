@@ -3,17 +3,11 @@ import Header from "../../../elements/header";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Book from "../../../../models/Book";
+import User from "../../../../models/User";
 const Cookie = require("js-cookie");
 
 
 interface Props{}
-
-interface User {
-    id: string,
-    name: string,
-    email: string,
-    is_admin: boolean,
-}
 
 export default function UserHome(props: Props){
     
@@ -58,7 +52,7 @@ export default function UserHome(props: Props){
             <>
             <div className="d-flex w-100">
                 <div className="d-table w-100">
-                    <Header />
+                    <Header user={user} />
                     <UserPageContent />
                 </div>
             </div>

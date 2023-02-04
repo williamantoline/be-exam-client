@@ -1,9 +1,10 @@
+import User from "../../models/User";
 import { css } from "../../styles/styles";
 const Cookie = require("js-cookie");
 
 
 interface Props{
-
+    user: User,
 }
 
 export default function Header (props:Props){
@@ -23,11 +24,10 @@ export default function Header (props:Props){
                                 <p className="text-white">&#169;Atheneum, 2023.</p>
                             </div>
                             <div className="col-sm-4 offset-md-1 py-4">
-                                <h4 className="text-white">Contact</h4>
+                                <h4 className="text-white">User Profile</h4>
                                 <ul className="list-unstyled">
-                                    <li><a href="/" className="text-white">Follow on Twitter</a></li>
-                                    <li><a href="/" className="text-white">Like on Facebook</a></li>
-                                    <li><a href="/" className="text-white">Email me</a></li>
+                                    <li><a href="/" className="text-white">Name: {props.user.name}</a></li>
+                                    <li><a href="/" className="text-white">Email: {props.user.email}</a></li>
                                 </ul>
                             </div>
                         </div>

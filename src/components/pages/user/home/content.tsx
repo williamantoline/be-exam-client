@@ -4,6 +4,7 @@ import Button from "../../../elements/button";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import BookModel from "../../../../models/Book";
+import Borrowing from "../../../../models/Borrowing";
 const Cookie = require("js-cookie");
 
 interface Props{}
@@ -13,6 +14,20 @@ export default function UserPageContent(props:Props){
     const [books, setBooks] = useState<BookModel[]>([]);
     const [loading, setLoading] = useState(false);
     const [bookInput, setBookInput] = useState<BookModel>();
+    const [borrowings, setBorrowings] = useState<Borrowing[]>([]);
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:3013/api/user/borrowings`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
+        .then((res: any) => {
+            setBorrowings(res.data.data);
+            setLoading(false);
+        })
+    }, []);
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:3013/api/books`, {
@@ -78,8 +93,20 @@ export default function UserPageContent(props:Props){
                 </div>
                 <div>
                     <h2>Borrowing List</h2>
-                    <div>
-                        <p>Abc</p> //todo
+                    <div style={{display: "flex"}}>
+                        {
+                            borrowings.map((borrowing: Borrowing) => {
+                                return (
+                                    <div className="card" style={{width: "18rem"}}>
+                                        <div className="card-body">
+                                            <h5 className="card-title">{borrowing.status}</h5>
+                                            <h6 className="card-subtitle mb-2 text-muted">{new Date(borrowing.createdAt).toLocaleDateString()}</h6>
+                                            <p className="card-text">Book Title: {borrowing.book.title}</p>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </section>
