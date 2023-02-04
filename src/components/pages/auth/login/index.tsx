@@ -30,7 +30,7 @@ export default function Login(props: Props) {
                 if (res.data.is_admin) {
                     window.location.replace("/admin/users");
                 } else {
-                    window.location.replace("/home");
+                    window.location.replace("/");
                 }
             }
         })

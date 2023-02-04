@@ -16,7 +16,7 @@ export default function Router() {
             <Routes>
                 <Route element={<Login />} path={"/login"} />
                 <Route element={<Register />} path={"/register"} />
-                <Route element={<UserHome />} path={"/"} />
+                <Route element={<UserHome />} path={""} />
                 <Route path="/admin">
                     {/* <Route element={<Dashboard />} path={"dashboard"} /> */}
                     <Route element={<UserPage />} path={"users"} />

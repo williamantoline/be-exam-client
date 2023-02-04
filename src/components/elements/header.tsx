@@ -1,4 +1,5 @@
 import { css } from "../../styles/styles";
+const Cookie = require("js-cookie");
 
 
 interface Props{
@@ -6,6 +7,11 @@ interface Props{
 }
 
 export default function Header (props:Props){
+    const handleSignOut = () => {
+        Cookie.remove('token', { path: '' });
+        window.location.replace("/login");
+    }
+
     return(
         <header style={{height: "100%"}}>
                 <div className="bg-dark collapse" id="navbarHeader" style={{backgroundImage: "url(/library.jpg)"}}>
@@ -19,9 +25,9 @@ export default function Header (props:Props){
                             <div className="col-sm-4 offset-md-1 py-4">
                                 <h4 className="text-white">Contact</h4>
                                 <ul className="list-unstyled">
-                                    <li><a href="#" className="text-white">Follow on Twitter</a></li>
-                                    <li><a href="#" className="text-white">Like on Facebook</a></li>
-                                    <li><a href="#" className="text-white">Email me</a></li>
+                                    <li><a href="/" className="text-white">Follow on Twitter</a></li>
+                                    <li><a href="/" className="text-white">Like on Facebook</a></li>
+                                    <li><a href="/" className="text-white">Email me</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -29,8 +35,12 @@ export default function Header (props:Props){
                 </div>
                 <div className="navbar navbar-dark bg-dark shadow-sm">
                     <div className="container">
-                        <a href="#" className="navbar-brand d-flex align-items-center">
+                        <a href="/" className="navbar-brand d-flex align-items-center">
+                            Atheneum
                         </a>
+                        <button className="btn btn-secondary" onClick={handleSignOut}>
+                            Sign Out
+                        </button>
                         <button className="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>

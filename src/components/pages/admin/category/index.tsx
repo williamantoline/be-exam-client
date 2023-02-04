@@ -22,6 +22,9 @@ export default function CategoryPage(props: Props) {
             }
         })
         .then((res: any) => {
+            if (res.data.is_admin === false) {
+                window.location.replace("/");
+            }
             setUser(res.data.user);
             setLoading(false);
         })

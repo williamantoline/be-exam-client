@@ -17,22 +17,24 @@ interface Props {}
 export default function NotificationPage(props: Props) {
 
     const [loading, setLoading] = useState<Boolean>(true);
+
     const [user, setUser] = useState<User>();
+    const [success, setSuccess] = useState(false);
 
-
+    
     useEffect(() => {
-        axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, { name: 'John Doe' }, {
+        axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, {}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': Cookie.get('token'),
             }
         })
         .then((res: any) => {
+            if (res.data.is_admin === false) {
+                window.location.replace("/");
+            }
             setUser(res.data.user);
             setLoading(false);
-        })
-        .catch((err: any) => {
-            window.location.replace("/login");
         })
     }, []);
 
@@ -51,7 +53,7 @@ export default function NotificationPage(props: Props) {
             setNotifications(res.data.data);
             console.log(res.data);
         });
-    }, []);
+    }, [success]);
 
 
     useEffect(() => {
@@ -74,6 +76,7 @@ export default function NotificationPage(props: Props) {
             }
         })
         .then((res: any) => {
+            setSuccess(true);
             alert(res.data.message);
         });
     }
@@ -100,7 +103,9 @@ export default function NotificationPage(props: Props) {
                                     }
                                     return (
                                         <div className={clsname} role="alert">
-                                            {notif.read_at ? '' : '[NEW]'} <strong>{notif.subject}</strong> {notif.body}
+                                            {notif.read_at ? '' : '[NEW] '}
+                                            {notif.read_at ? (notif.subject) : (<strong>{notif.subject}</strong>)}
+                                            {notif.body}
                                             {/* <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> */}
                                         </div>
                                     );

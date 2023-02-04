@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Flex from "../../../elements/flex";
 import Sidebar from "../../../elements/sidebar";
 import User from "../../../../models/User";
-import Category from "../../../../models/Category";
 import Book from "../../../../models/Book";
 import Borrowing from "../../../../models/Borrowing";
 
@@ -17,6 +16,9 @@ export default function BorrowingPage(props: Props) {
 
     const [loading, setLoading] = useState<Boolean>(true);
     const [user, setUser] = useState<User>();
+
+    const [users, setUsers] = useState<User[]>([]);
+    const [books, setBooks] = useState<Book[]>([]);
 
 
     useEffect(() => {
@@ -36,39 +38,53 @@ export default function BorrowingPage(props: Props) {
     }, []);
 
 
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:3013/api/users`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
+        .then((res: any) => {
+            setUsers(res.data.data);
+            setUserInput(res.data.data[0].id);
+            setLoading(false);
+        })
+        .catch((err: any) => {
+            // window.location.replace("/login");
+        })
+    }, []);
+
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:3013/api/books?isAvailable=true`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
+        .then((res: any) => {
+            setBooks(res.data.data);
+            setBookInput(res.data.data[0].id);
+            setLoading(false);
+        })
+        .catch((err: any) => {
+            // window.location.replace("/login");
+        })
+    }, []);
+
+
+
+
     const [borrowings, setBorrowings] = useState<Borrowing[]>([]);
 
-    const [categoryInput, setCategoryInput] = useState("");
-    const handleCategoryInputChange = (e: any) => {
-        setCategoryInput(e.target.value);
+    const [userInput, setUserInput] = useState("");
+    const handleUserInputChange = (e: any) => {
+        setUserInput(e.target.value);
     }
-    const [titleInput, setTitleInput] = useState("");
-    const handleTitleInputChange = (e: any) => {
-        setTitleInput(e.target.value);
-    }
-    const [authorInput, setAuthorInput] = useState("");
-    const handleAuthorInputChange = (e: any) => {
-        setAuthorInput(e.target.value);
-    }
-    const [publisherInput, setPublisherInput] = useState("");
-    const handlePublisherInputChange = (e: any) => {
-        setPublisherInput(e.target.value);
-    }
-    const [descriptionInput, setDescriptionInput] = useState("");
-    const handleDescriptionInputChange = (e: any) => {
-        setDescriptionInput(e.target.value);
-    }
-    const [pageInput, setPageInput] = useState("");
-    const handlePageInputChange = (e: any) => {
-        setPageInput(e.target.value);
-    }
-    const [languageInput, setLanguageInput] = useState("");
-    const handleLanguageInputChange = (e: any) => {
-        setLanguageInput(e.target.value);
-    }
-    const [stockInput, setStockInput] = useState("");
-    const handleStockInputChange = (e: any) => {
-        setStockInput(e.target.value);
+    const [bookInput, setBookInput] = useState("");
+    const handleBookInputChange = (e: any) => {
+        setBookInput(e.target.value);
     }
 
     const [successMessage, setSuccessMessage] = useState("");
@@ -78,7 +94,7 @@ export default function BorrowingPage(props: Props) {
 
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:3013/api/borrowings`, {
+        axios.get(`http://127.0.0.1:3013/api/admin/borrowings`, {
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": Cookie.get("token"),
@@ -92,29 +108,22 @@ export default function BorrowingPage(props: Props) {
 
 
     const resetForm = () => {
-        setCategoryInput("");
-        setTitleInput("");
-        setAuthorInput("");
-        setPublisherInput("");
-        setDescriptionInput("");
-        setPageInput("");
-        setLanguageInput("");
-        setStockInput("");
+        setUserInput("");
+        setBookInput("");
     }
 
 
     const handleAddBook = async () => {
         setSuccessMessage("");
         setErrorMessage("");
-        await axios.post(`http://127.0.0.1:3013/api/borrowings`, {
-            title: titleInput,
-            author: authorInput,
-            language: languageInput,
-            stock: stockInput,
-            publisher: publisherInput,
-            description: descriptionInput,
-            page: pageInput,
-            categoryId: categoryInput,
+        await axios.post(`http://127.0.0.1:3013/api/admin/borrowings`, {
+            userId: userInput,
+            bookId: bookInput,
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
         })
         .then((res: any) => {
             setSuccessMessage(res.data.message);
@@ -128,15 +137,9 @@ export default function BorrowingPage(props: Props) {
     const handleEditBook = async () => {
         setSuccessMessage("");
         setErrorMessage("");
-        await axios.put(`http://127.0.0.1:3013/api/borrowings/${selectedId}`, {
-            title: titleInput,
-            author: authorInput,
-            language: languageInput,
-            stock: stockInput,
-            publisher: publisherInput,
-            description: descriptionInput,
-            page: pageInput,
-            categoryId: categoryInput,
+        await axios.put(`http://127.0.0.1:3013/api/admin/borrowings/${selectedId}`, {
+            userId: userInput,
+            bookId: bookInput,
         })
         .then((res: any) => {
             setSuccessMessage(res.data.message);
@@ -147,20 +150,24 @@ export default function BorrowingPage(props: Props) {
         });
     }
 
+    const [modalLoading, setModalLoading] = useState(true);
+
     const handleSelect = async (e: any) => {
         resetForm();
-        await setSelectedId(e.target.id);
-        await axios.get(`http://127.0.0.1:3013/api/borrowings/${e.target.id}`)
+        setModalLoading(true);
+        await axios.get(`http://127.0.0.1:3013/api/admin/borrowings/${e.target.id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
         .then((res: any) => {
-            setTitleInput(res.data.data.title);
-            setAuthorInput(res.data.data.author);
-            setPublisherInput(res.data.data.publisher);
-            setDescriptionInput(res.data.data.description);
-            setPageInput(res.data.data.page);
-            setLanguageInput(res.data.data.language);
-            setStockInput(res.data.data.stock);
+            setUserInput(res.data.data.title);
+            setBookInput(res.data.data.author);
+            setSelectedId(res.data.data.id);
         })
         .catch((err: any) => {
+            alert(err.response.data.message);
             console.log(err);
         });
     } 
@@ -168,7 +175,48 @@ export default function BorrowingPage(props: Props) {
     const handleDeleteBook = async () => {
         setSuccessMessage("");
         setErrorMessage("");
-        await axios.delete(`http://127.0.0.1:3013/api/borrowings/${selectedId}`)
+        await axios.delete(`http://127.0.0.1:3013/api/admin/borrowings/${selectedId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
+        .then((res: any) => {
+            setSuccessMessage(res.data.message);
+            resetForm();
+        })
+        .catch((err: any) => {
+            setErrorMessage(err.response.data.message);
+        });
+    }
+
+    const handleReturnBook = async () => {
+        setSuccessMessage("");
+        setErrorMessage("");
+        await axios.patch(`http://127.0.0.1:3013/api/admin/borrowings/${selectedId}/return`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
+        .then((res: any) => {
+            setSuccessMessage(res.data.message);
+            resetForm();
+        })
+        .catch((err: any) => {
+            setErrorMessage(err.response.data.message);
+        });
+    }
+
+    const handleTakenBook = async () => {
+        setSuccessMessage("");
+        setErrorMessage("");
+        await axios.patch(`http://127.0.0.1:3013/api/admin/borrowings/${selectedId}/taken`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': Cookie.get('token'),
+            }
+        })
         .then((res: any) => {
             setSuccessMessage(res.data.message);
             resetForm();
@@ -186,7 +234,7 @@ export default function BorrowingPage(props: Props) {
                     <div className="mt-5 w-75">
                         <Flex justify="space-between">
                             <h2 className="">Borrowings</h2>
-                            <button style={{height: 40}} type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Book</button>
+                            <button style={{height: 40}} type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Add Borrowing</button>
                         </Flex>
                         {
                             successMessage ? 
@@ -230,26 +278,24 @@ export default function BorrowingPage(props: Props) {
                                                     <td>{borrowing.book.title}</td>
                                                     <td>
                                                         <div className="btn-group">
-                                                            <button className="btn btn-primary btn-outline-secondary" style={{color: "white"}} id={borrowing.id} onClick={handleSelect} data-bs-toggle="modal" data-bs-target="#viewModal">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-                                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                                                        <button disabled={borrowing.status !== 'Requested'} className="btn btn-primary btn-outline-secondary" style={{color: "white"}} id={borrowing.id} onClick={handleSelect} data-bs-toggle="modal" data-bs-target="#takenModal">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                                                 </svg>
-                                                                View
+                                                                Taken
                                                             </button>
-                                                            <button className="btn btn-warning btn-outline-secondary" style={{color: "black"}} data-bs-toggle="modal" id={borrowing.id} onClick={handleSelect} data-bs-target="#editModal">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" className="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"></path>
-                                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"></path>
-                                                                </svg> 
-                                                                Edit
+                                                            <button disabled={borrowing.status !== 'In Progress'} className="btn btn-primary btn-outline-secondary" style={{color: "white"}} id={borrowing.id} onClick={handleSelect} data-bs-toggle="modal" data-bs-target="#returnModal">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                                                                </svg>
+                                                                Returned
                                                             </button>
-                                                            <button className="btn btn-danger btn-outline-secondary" style={{color: "white"}} id={borrowing.id} onClick={handleSelect} data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                            {/* <button className="btn btn-danger btn-outline-secondary" style={{color: "white"}} id={borrowing.id} onClick={handleSelect} data-bs-toggle="modal" data-bs-target="#deleteModal">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash-fill" viewBox="0 0 16 16">
                                                                     <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                                                                 </svg>
                                                                 Delete
-                                                            </button>
+                                                            </button> */}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -272,45 +318,32 @@ export default function BorrowingPage(props: Props) {
                         <div className="modal-body">
                             <form>
                                 <div className="mb-3">
-                                    <select onChange={handleCategoryInputChange} className="form-select" aria-label="Default select example">
-                                        {/* {
-                                            categories.map((category: Category) => {
+                                    <label htmlFor="title" className="col-form-label">User:</label>
+                                    <select onChange={handleUserInputChange} className="form-select" aria-label="Default select example">
+                                        {
+                                            users.map((user: User) => {
                                                 return (
                                                     <>
-                                                        <option selected={categoryInput === category.id} value={category.id}>{category.name}</option>
+                                                        <option selected={userInput === user.id} value={user.id}>{user.name}</option>
                                                     </>
                                                 )
                                             })
-                                        } */}
+                                        }
                                     </select>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="title" className="col-form-label">Title:</label>
-                                    <input value={titleInput} onChange={handleTitleInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Author:</label>
-                                    <input value={authorInput} onChange={handleAuthorInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Publisher:</label>
-                                    <input value={publisherInput} onChange={handlePublisherInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Description:</label>
-                                    <input value={descriptionInput} onChange={handleDescriptionInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Page:</label>
-                                    <input value={pageInput} onChange={handlePageInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Language:</label>
-                                    <input value={languageInput} onChange={handleLanguageInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Stock:</label>
-                                    <input value={stockInput} onChange={handleStockInputChange} type="text" className="form-control" id="recipient-name" />
+                                    <label htmlFor="title" className="col-form-label">Book:</label>
+                                    <select onChange={handleBookInputChange} className="form-select" aria-label="Default select example">
+                                        {
+                                            books.map((book: Book) => {
+                                                return (
+                                                    <>
+                                                        <option selected={bookInput === book.id} value={book.id}>{book.title}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+                                    </select>
                                 </div>
                             </form>
                         </div>
@@ -338,119 +371,36 @@ export default function BorrowingPage(props: Props) {
                         </div>
                     </div>
                 </div>
-                <div className="modal fade" id="editModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal fade" id="returnModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog">
                         <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Edit Book</h1>
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">Return Book</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form>
-                                <div className="mb-3">
-                                    <select onChange={handleCategoryInputChange} className="form-select" aria-label="Default select example">
-                                        {/* {
-                                            categories.map((category: Category) => {
-                                                return (
-                                                    <>
-                                                        <option selected={categoryInput === category.id} value={category.id}>{category.name}</option>
-                                                    </>
-                                                )
-                                            })
-                                        } */}
-                                    </select>
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="title" className="col-form-label">Title:</label>
-                                    <input value={titleInput} onChange={handleTitleInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Author:</label>
-                                    <input value={authorInput} onChange={handleAuthorInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Publisher:</label>
-                                    <input value={publisherInput} onChange={handlePublisherInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Description:</label>
-                                    <input value={descriptionInput} onChange={handleDescriptionInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Page:</label>
-                                    <input value={pageInput} onChange={handlePageInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Language:</label>
-                                    <input value={languageInput} onChange={handleLanguageInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Stock:</label>
-                                    <input value={stockInput} onChange={handleStockInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                            </form>
+                            <p>Is the book returned?</p>
                         </div>
                         <div className="modal-footer">
                             <button style={{cursor: "pointer"}} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button style={{cursor: "pointer"}} className="btn btn-primary" data-bs-dismiss="modal" onClick={handleEditBook}>Submit</button>
+                            <button style={{cursor: "pointer"}} className="btn btn-primary" data-bs-dismiss="modal" onClick={handleReturnBook}>Confirm</button>
                         </div>
                         </div>
                     </div>
                 </div>
-                <div className="modal fade" id="viewModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal fade" id="takenModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div className="modal-dialog">
                         <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Book Detail</h1>
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">Taken Book</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form>
-                                <div className="mb-3">
-                                    <select disabled onChange={handleCategoryInputChange} className="form-select" aria-label="Default select example">
-                                        {/* {
-                                            categories.map((category: Category) => {
-                                                return (
-                                                    <>
-                                                        <option selected={categoryInput === category.id} value={category.id}>{category.name}</option>
-                                                    </>
-                                                )
-                                            })
-                                        } */}
-                                    </select>
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="title" className="col-form-label">Title:</label>
-                                    <input disabled value={titleInput} onChange={handleTitleInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Author:</label>
-                                    <input disabled value={authorInput} onChange={handleAuthorInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Publisher:</label>
-                                    <input disabled value={publisherInput} onChange={handlePublisherInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Description:</label>
-                                    <input disabled value={descriptionInput} onChange={handleDescriptionInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Page:</label>
-                                    <input disabled value={pageInput} onChange={handlePageInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Language:</label>
-                                    <input disabled value={languageInput} onChange={handleLanguageInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Stock:</label>
-                                    <input disabled value={stockInput} onChange={handleStockInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                            </form>
+                            <p>Is the book taken?</p>
                         </div>
                         <div className="modal-footer">
                             <button style={{cursor: "pointer"}} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button style={{cursor: "pointer"}} className="btn btn-primary" data-bs-dismiss="modal" onClick={handleTakenBook}>Confirm</button>
                         </div>
                         </div>
                     </div>

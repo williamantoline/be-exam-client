@@ -18,23 +18,27 @@ interface File {
 
 export default function BookPage(props: Props) {
 
+    const urlFormat = (a: string) => {
+        return a.substring(7, a.length);
+    }
+
     const [loading, setLoading] = useState<Boolean>(true);
     const [user, setUser] = useState<User>();
 
 
     useEffect(() => {
-        axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, { name: 'John Doe' }, {
+        axios.post(`http://127.0.0.1:3013/api/auth/jwtToken`, {}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': Cookie.get('token'),
             }
         })
         .then((res: any) => {
+            if (res.data.is_admin === false) {
+                window.location.replace("/");
+            }
             setUser(res.data.user);
             setLoading(false);
-        })
-        .catch((err: any) => {
-            window.location.replace("/login");
         })
     }, []);
 
@@ -62,17 +66,13 @@ export default function BookPage(props: Props) {
     const handleDescriptionInputChange = (e: any) => {
         setDescriptionInput(e.target.value);
     }
-    const [pageInput, setPageInput] = useState("");
+    const [pageInput, setPageInput] = useState(0);
     const handlePageInputChange = (e: any) => {
-        setPageInput(e.target.value);
+        setPageInput(parseInt(e.target.value));
     }
     const [languageInput, setLanguageInput] = useState("");
     const handleLanguageInputChange = (e: any) => {
         setLanguageInput(e.target.value);
-    }
-    const [stockInput, setStockInput] = useState("");
-    const handleStockInputChange = (e: any) => {
-        setStockInput(e.target.value);
     }
 
     const [fileInput, setFileInput] = useState<any>([]);
@@ -80,6 +80,8 @@ export default function BookPage(props: Props) {
         console.log(e.target.files);
         setFileInput(e.target.files[0]);
     }
+
+    const [fileurl, setFileurl] = useState("");
 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -122,9 +124,9 @@ export default function BookPage(props: Props) {
         setAuthorInput("");
         setPublisherInput("");
         setDescriptionInput("");
-        setPageInput("");
+        setPageInput(0);
         setLanguageInput("");
-        setStockInput("");
+        setFileurl("");
     }
 
 
@@ -135,10 +137,9 @@ export default function BookPage(props: Props) {
         formData.append("title", titleInput);
         formData.append("author", authorInput);
         formData.append("language", languageInput);
-        formData.append("stock", stockInput);
         formData.append("publisher", publisherInput);
         formData.append("description", descriptionInput);
-        formData.append("page", pageInput);
+        formData.append("page", String(pageInput));
         formData.append("categoryId", categoryInput);
         formData.append("image", fileInput, fileInput.name);
 
@@ -164,7 +165,6 @@ export default function BookPage(props: Props) {
             title: titleInput,
             author: authorInput,
             language: languageInput,
-            stock: stockInput,
             publisher: publisherInput,
             description: descriptionInput,
             page: pageInput,
@@ -220,7 +220,7 @@ export default function BookPage(props: Props) {
             setDescriptionInput(res.data.data.description);
             setPageInput(res.data.data.page);
             setLanguageInput(res.data.data.language);
-            setStockInput(res.data.data.stock);
+            setFileurl(res.data.data.image);
             setSelectedId(res.data.data.id);
             setModalLoading(false);
         })
@@ -260,9 +260,9 @@ export default function BookPage(props: Props) {
                                     <th scope="col">#</th>
                                     <th scope="col">Title</th>
                                     <th scope="col">Category</th>
+                                    <th scope="col">Is Available</th>
                                     <th scope="col">Author</th>
                                     <th scope="col">Language</th>
-                                    <th scope="col">Stock</th>
                                     <th scope="col">Created At</th>
                                     <th scope="col"></th>
                                 </tr>
@@ -280,9 +280,9 @@ export default function BookPage(props: Props) {
                                                     <th scope="row">{i + 1}</th>
                                                     <td>{book.title}</td>
                                                     <td>{book.category?.name}</td>
+                                                    <td>{book.isAvailable ? "Yes" : "No"}</td>
                                                     <td>{book.author}</td>
                                                     <td>{book.language}</td>
-                                                    <td>{book.stock}</td>
                                                     <td>{new Date(book.createdAt).toLocaleString()}</td>
                                                     <td>
                                                         <div className="btn-group">
@@ -358,15 +358,11 @@ export default function BookPage(props: Props) {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="col-form-label">Page:</label>
-                                    <input value={pageInput} onChange={handlePageInputChange} type="text" className="form-control" id="recipient-name" />
+                                    <input value={pageInput} onChange={handlePageInputChange} type="number" className="form-control" id="recipient-name" />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="col-form-label">Language:</label>
                                     <input value={languageInput} onChange={handleLanguageInputChange} type="text" className="form-control" id="recipient-name" />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Stock:</label>
-                                    <input value={stockInput} onChange={handleStockInputChange} type="text" className="form-control" id="recipient-name" />
                                 </div>
                                 <div className="input-group">
                                     <input type="file" onChange={handleFileChange} className="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" />
@@ -437,15 +433,14 @@ export default function BookPage(props: Props) {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="col-form-label">Page:</label>
-                                    <input value={pageInput} onChange={handlePageInputChange} type="text" className="form-control" id="recipient-name" />
+                                    <input value={pageInput} onChange={handlePageInputChange} type="number" className="form-control" id="recipient-name" />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="name" className="col-form-label">Language:</label>
                                     <input value={languageInput} onChange={handleLanguageInputChange} type="text" className="form-control" id="recipient-name" />
                                 </div>
-                                <div className="mb-3">
-                                    <label htmlFor="name" className="col-form-label">Stock:</label>
-                                    <input value={stockInput} onChange={handleStockInputChange} type="text" className="form-control" id="recipient-name" />
+                                <div className="input-group">
+                                    <input type="file" onChange={handleFileChange} className="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" />
                                 </div>
                             </form>
                         </div>
@@ -503,15 +498,15 @@ export default function BookPage(props: Props) {
                                         </div>
                                         <div className="mb-3">
                                             <label htmlFor="name" className="col-form-label">Page:</label>
-                                            <input disabled value={pageInput} onChange={handlePageInputChange} type="text" className="form-control" id="recipient-name" />
+                                            <input disabled value={pageInput} onChange={handlePageInputChange} type="number" className="form-control" id="recipient-name" />
                                         </div>
                                         <div className="mb-3">
                                             <label htmlFor="name" className="col-form-label">Language:</label>
                                             <input disabled value={languageInput} onChange={handleLanguageInputChange} type="text" className="form-control" id="recipient-name" />
                                         </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="name" className="col-form-label">Stock:</label>
-                                            <input disabled value={stockInput} onChange={handleStockInputChange} type="text" className="form-control" id="recipient-name" />
+                                        <div className="input-group">
+                                        <label htmlFor="name" className="col-form-label">Image:</label>
+                                            <img className="w-100" src={`http://127.0.0.1:3013/${urlFormat(fileurl)}`} alt="" />
                                         </div>
                                     </form>
                                 )
