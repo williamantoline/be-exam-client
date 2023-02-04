@@ -17,7 +17,7 @@ interface Props {
 export default function Sidebar(props: Props) {
 
     const handleSignOut = () => {
-        Cookie.remove('token', { path: '' });
+        Cookie.remove('token', { path: '/', domain: 'localhost' });
         window.location.replace("/login");
     }
 
