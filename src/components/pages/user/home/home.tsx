@@ -29,8 +29,13 @@ export default function UserHome(props: Props){
             }
         })
         .then((res: any) => {
+            if (res.data.tokenStatus === false) {
+                window.location.replace("/login");
+            }
             setUser(res.data.user);
             setLoading(false);
+        })
+        .catch((err: any) => {
         })
     }, []);
 
