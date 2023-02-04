@@ -5,8 +5,11 @@ import Sidebar from "../../../elements/sidebar";
 import User from "../../../../models/User";
 import Category from "../../../../models/Category";
 import Book from "../../../../models/Book";
+import io from "socket.io-client";
 
 const Cookie = require("js-cookie");
+
+const socket = io('http://127.0.0.1:3013');
 
 const logo  = require("../../../../assets/logo.png");
 
@@ -148,6 +151,7 @@ export default function BookPage(props: Props) {
         })
         .then((res: any) => {
             setSuccessMessage(res.data.message);
+            socket.emit('data_changed', {data: res.data.data} )
             resetForm();
         })
         .catch((err: any) => {
@@ -158,26 +162,28 @@ export default function BookPage(props: Props) {
     const handleEditBook = async () => {
         setSuccessMessage("");
         setErrorMessage("");
-        await axios.put(`http://127.0.0.1:3013/api/books/${selectedId}`, {
-            title: titleInput,
-            author: authorInput,
-            language: languageInput,
-            publisher: publisherInput,
-            description: descriptionInput,
-            page: pageInput,
-            categoryId: categoryInput,
-        }, {
+        const formData = new FormData();
+        formData.append("title", titleInput);
+        formData.append("author", authorInput);
+        formData.append("language", languageInput);
+        formData.append("publisher", publisherInput);
+        formData.append("description", descriptionInput);
+        formData.append("page", String(pageInput));
+        formData.append("categoryId", categoryInput);
+        formData.append("image", fileInput, fileInput.name);
+        await axios.post(`http://127.0.0.1:3013/api/books/${selectedId}`, formData, {
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': Cookie.get('token'),
+                "Content-Type": "multipart/form-data",
+                "Authorization": Cookie.get("token"),
             }
         })
         .then((res: any) => {
             setSuccessMessage(res.data.message);
+            socket.emit('data_changed', {data: res.data.data} )
             resetForm();
         })
         .catch((err: any) => {
-            setErrorMessage(err.response.data.message);
+            setErrorMessage(err.response.data.message || err.response.data.errors[0].msg);
         });
     }
 
@@ -192,6 +198,7 @@ export default function BookPage(props: Props) {
         })
         .then((res: any) => {
             setSuccessMessage(res.data.message);
+            socket.emit('data_changed', {data: res.data.data} )
             resetForm();
         })
         .catch((err: any) => {

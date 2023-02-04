@@ -4,7 +4,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import BookModel from "../../../../models/Book";
 import Borrowing from "../../../../models/Borrowing";
+import io from "socket.io-client";
+
 const Cookie = require("js-cookie");
+
+const socket = io('http://127.0.0.1:3013');
 
 interface Props{}
 
@@ -30,6 +34,14 @@ export default function UserPageContent(props:Props){
             setLoading(false);
         })
     }, [successMessage]);
+    
+    useEffect(() => {
+        socket.on('refresh_data', (data) => {
+            console.log(data.data);
+            setBooks(data.data);
+            setLoading(false);
+        })
+    }, [socket]);
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:3013/api/books`, {
@@ -39,6 +51,7 @@ export default function UserPageContent(props:Props){
             }
         })
         .then((res: any) => {
+            console.log(res.data.data)
             setBooks(res.data.data);
             setLoading(false);
         })
