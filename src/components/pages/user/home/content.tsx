@@ -48,6 +48,7 @@ export default function UserPageContent(props:Props){
 
 
     const handleSelect = async (e: any) => {
+        console.log(123);
         setModalLoading(true);
         await axios.get(`http://127.0.0.1:3013/api/books/${e.target.id}`, {
             headers: {
