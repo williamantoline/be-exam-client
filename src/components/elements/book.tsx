@@ -11,13 +11,18 @@ interface Props {
 }
 
 export default function Book(props: Props) {
+
+    const urlFormat = (a: string) => {
+        return a.substring(7, a.length);
+    }
+    
     return(
         <div className="album py-5 bg-light">
             <div className="container">
                 <div className="">
                     <div className="col">
                         <div className="card shadow-sm">
-                            <img src={props.image} alt="" />
+                            <img src={`http://127.0.0.1:3013/${urlFormat(props.image)}`} alt="" />
                             <div className="card-body">
                                 <p className="card-text">{props.title}</p>
                                 <div className="d-flex justify-content-between align-items-center">
